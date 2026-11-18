@@ -304,6 +304,48 @@
       }
     }
 
+async function testLiveCandles() {
+  const output = document.getElementById("candleResult");
+
+  output.innerText = "Loading live BTC candles...";
+
+  try {
+    if (!window.BBPCandles) {
+      throw new Error("Candle module not loaded");
+    }
+
+    const candles = await window.BBPCandles.getCandles(
+      "BTCUSD",
+      "5m",
+      100
+    );
+
+    if (candles.length < 50) {
+      throw new Error("Not enough candles received");
+    }
+
+    const latest = candles[candles.length - 1];
+
+    output.innerText =
+      "LIVE BTC CANDLES CONNECTED\n\n" +
+      "Candle Count: " + candles.length + "\n" +
+      "Timeframe: 5 Minutes\n" +
+      "Latest Open: " + latest.open + "\n" +
+      "Latest High: " + latest.high + "\n" +
+      "Latest Low: " + latest.low + "\n" +
+      "Latest Close: " + latest.close + "\n" +
+      "Volume: " + latest.volume;
+
+    output.style.color = "#00df91";
+
+  } catch (error) {
+    output.innerText =
+      "LIVE CANDLE ERROR: " + error.message;
+
+    output.style.color = "#ff5555";
+  }
+}
+    
     function testStrategy() {
       const output = document.getElementById("strategyResult");
 

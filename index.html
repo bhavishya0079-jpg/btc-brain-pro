@@ -353,6 +353,47 @@ async function testLiveCandles() {
     output.style.color = "#ff5555";
   }
 }
+ 
+async function runLiveStrategy() {
+  const output = document.getElementById("liveStrategyResult");
+
+  output.innerText = "Analyzing live BTC market...";
+  output.style.color = "#e0b84d";
+
+  try {
+    const candles = await window.BBPCandles.getCandles(
+      "BTCUSD",
+      "5m",
+      100
+    );
+
+    if (candles.length < 50) {
+      throw new Error("Not enough live candles");
+    }
+
+    const result = window.BBPStrategies.analyze(candles);
+
+    output.innerText =
+      "LIVE BTC STRATEGY\n\n" +
+      "SIGNAL: " + result.signal + "\n" +
+      "ENTRY: " + (result.entry ?? "WAIT") + "\n" +
+      "STOP LOSS: " + (result.stopLoss ?? "WAIT") + "\n" +
+      "TARGET: " + (result.target ?? "WAIT") + "\n" +
+      "RISK/REWARD: " + (result.riskReward ?? "N/A") + "\n" +
+      "REASON: " + result.reason + "\n\n" +
+      "CANDLES: " + candles.length +
+      "\nTIMEFRAME: 5 MINUTES";
+
+    output.style.color =
+      result.signal === "LONG" ? "#00df91" :
+      result.signal === "SHORT" ? "#ff5555" :
+      "#e0b84d";
+
+  } catch (error) {
+    output.innerText = "LIVE STRATEGY ERROR: " + error.message;
+    output.style.color = "#ff5555";
+  }
+}
     
     function testStrategy() {
       const output = document.getElementById("strategyResult");

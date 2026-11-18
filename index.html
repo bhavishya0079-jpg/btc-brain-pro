@@ -7,6 +7,7 @@
   <title>BTC BRAIN PRO</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <header>
@@ -22,100 +23,151 @@
   </nav>
 
   <main>
+
+    <!-- DASHBOARD -->
     <section id="dashboard" class="tab">
       <h2>Dashboard</h2>
       <p>Welcome to BTC BRAIN PRO</p>
     </section>
 
+    <!-- SCANNER -->
     <section id="scanner" class="tab" hidden>
       <h2>Market Scanner</h2>
+      <p>BTC and ETH Market Analysis</p>
     </section>
 
+    <!-- PLANS -->
     <section id="plans" class="tab" hidden>
       <h2>Trading Plans</h2>
+      <p>Entry, Stop Loss and Target Analysis</p>
     </section>
 
+    <!-- DIAGNOSTICS -->
     <section id="diagnostics" class="tab" hidden>
       <h2>Diagnostics</h2>
+
       <div id="errorLog">System ready.</div>
+
       <button onclick="testError()">Test Error</button>
-      
-<button onclick="testIndicators()">Test Indicators</button>
-<div id="indicatorTest">Not tested</div>
-      
+
+      <button onclick="testIndicators()">
+        Test Indicators
+      </button>
+
+      <div id="indicatorTest"
+        style="white-space:pre-wrap; margin-top:15px;">
+        Not tested
+      </div>
+
     </section>
+
   </main>
 
+  <!-- INDICATORS TESTING -->
+  <script src="indicators.js"></script>
+
   <script>
+
     function showTab(id) {
       document.querySelectorAll('.tab').forEach(tab => {
         tab.hidden = true;
       });
+
       document.getElementById(id).hidden = false;
     }
 
-    
-function testIndicators() {
-  const output = document.getElementById("indicatorTest");
-
-  try {
-    const I = window.BBPIndicators;
-
-    if (!I) throw new Error("Indicators module not loaded");
-
-    const close = Array.from(
-      { length: 40 },
-      (_, i) => 100 + i * 1.2 + Math.sin(i / 2)
-    );
-
-    const candles = close.map(price => ({
-      open: price - 0.5,
-      high: price + 1,
-      low: price - 1,
-      close: price
-    }));
-
-    const results = {
-      EMA: I.ema(close, 20).at(-1),
-      RSI: I.rsi(close, 14).at(-1),
-      MACD: I.macd(close).line.at(-1),
-      Bollinger: I.bollinger(close).upper.at(-1),
-      ATR: I.atr(candles, 14).at(-1)
-    };
-
-    const checks = [
-      Number.isFinite(results.EMA),
-      Number.isFinite(results.RSI) &&
-        results.RSI >= 0 && results.RSI <= 100,
-      Number.isFinite(results.MACD),
-      Number.isFinite(results.Bollinger),
-      Number.isFinite(results.ATR) && results.ATR > 0
-    ];
-
-    const passed = checks.filter(Boolean).length;
-
-    output.innerText =
-      passed + "/5 INDICATORS PASSED\n" +
-      Object.entries(results).map(([name, value]) =>
-        name + ": " + (Number.isFinite(value)
-          ? value.toFixed(4) : "FAIL")
-      ).join("\n");
-
-    output.style.color =
-      passed === 5 ? "#00df91" : "#ff5555";
-
-  } catch (error) {
-    output.innerText = "TEST ERROR: " + error.message;
-    output.style.color = "#ff5555";
-  }
-}
-    
     function testError() {
       document.getElementById('errorLog').innerText =
         'Test error detected successfully.';
     }
+
+    function testIndicators() {
+
+      const output =
+        document.getElementById('indicatorTest');
+
+      try {
+
+        const I = window.BBPIndicators;
+
+        if (!I) {
+          throw new Error('Indicators module not loaded');
+        }
+
+        const close = Array.from(
+          { length: 40 },
+          (_, i) => 100 + i * 1.2 + Math.sin(i / 2)
+        );
+
+        const candles = close.map(price => ({
+          open: price - 0.5,
+          high: price + 1,
+          low: price - 1,
+          close: price
+        }));
+
+        const results = {
+
+          EMA: I.ema(close, 20).at(-1),
+
+          RSI: I.rsi(close, 14).at(-1),
+
+          MACD: I.macd(close).line.at(-1),
+
+          Bollinger: I.bollinger(close).upper.at(-1),
+
+          ATR: I.atr(candles, 14).at(-1)
+
+        };
+
+        const checks = [
+
+          Number.isFinite(results.EMA),
+
+          Number.isFinite(results.RSI) &&
+            results.RSI >= 0 &&
+            results.RSI <= 100,
+
+          Number.isFinite(results.MACD),
+
+          Number.isFinite(results.Bollinger),
+
+          Number.isFinite(results.ATR) &&
+            results.ATR > 0
+
+        ];
+
+        const passed = checks.filter(Boolean).length;
+
+        output.innerText =
+          passed + '/5 INDICATORS PASSED\n' +
+
+          Object.entries(results)
+            .map(([name, value]) =>
+              name + ': ' +
+              (Number.isFinite(value)
+                ? value.toFixed(4)
+                : 'FAIL')
+            )
+            .join('\n');
+
+        output.style.color =
+          passed === 5 ? '#00df91' : '#ff5555';
+
+      } catch (error) {
+
+        output.innerText =
+          'TEST ERROR: ' + error.message;
+
+        output.style.color = '#ff5555';
+
+      }
+    }
+
   </script>
-  <script src="js/indicators.js"></script>
-<script type="module" src="js/data.js"></script>
+
+  <!-- MARKET DATA MODULE -->
+  <script type="module" src="js/data.js"></script>
+
 </body>
 </html>

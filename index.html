@@ -39,6 +39,10 @@
       <h2>Diagnostics</h2>
       <div id="errorLog">System ready.</div>
       <button onclick="testError()">Test Error</button>
+      
+<button onclick="testIndicators()">Test Indicators</button>
+<div id="indicatorTest">Not tested</div>
+      
     </section>
   </main>
 
@@ -50,6 +54,62 @@
       document.getElementById(id).hidden = false;
     }
 
+    
+function testIndicators() {
+  const output = document.getElementById("indicatorTest");
+
+  try {
+    const I = window.BBPIndicators;
+
+    if (!I) throw new Error("Indicators module not loaded");
+
+    const close = Array.from(
+      { length: 40 },
+      (_, i) => 100 + i * 1.2 + Math.sin(i / 2)
+    );
+
+    const candles = close.map(price => ({
+      open: price - 0.5,
+      high: price + 1,
+      low: price - 1,
+      close: price
+    }));
+
+    const results = {
+      EMA: I.ema(close, 20).at(-1),
+      RSI: I.rsi(close, 14).at(-1),
+      MACD: I.macd(close).line.at(-1),
+      Bollinger: I.bollinger(close).upper.at(-1),
+      ATR: I.atr(candles, 14).at(-1)
+    };
+
+    const checks = [
+      Number.isFinite(results.EMA),
+      Number.isFinite(results.RSI) &&
+        results.RSI >= 0 && results.RSI <= 100,
+      Number.isFinite(results.MACD),
+      Number.isFinite(results.Bollinger),
+      Number.isFinite(results.ATR) && results.ATR > 0
+    ];
+
+    const passed = checks.filter(Boolean).length;
+
+    output.innerText =
+      passed + "/5 INDICATORS PASSED\n" +
+      Object.entries(results).map(([name, value]) =>
+        name + ": " + (Number.isFinite(value)
+          ? value.toFixed(4) : "FAIL")
+      ).join("\n");
+
+    output.style.color =
+      passed === 5 ? "#00df91" : "#ff5555";
+
+  } catch (error) {
+    output.innerText = "TEST ERROR: " + error.message;
+    output.style.color = "#ff5555";
+  }
+}
+    
     function testError() {
       document.getElementById('errorLog').innerText =
         'Test error detected successfully.';

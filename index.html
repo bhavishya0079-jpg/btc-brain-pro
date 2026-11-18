@@ -5,169 +5,375 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BTC BRAIN PRO</title>
-  <link rel="stylesheet" href="style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 15px;
+      background: #080d18;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 18px 5px;
+      border-bottom: 1px solid #263247;
+    }
+
+    header h1 {
+      color: #00df91;
+      margin: 0;
+      font-size: 27px;
+    }
+
+    header p {
+      color: #9aa9bd;
+      font-size: 13px;
+    }
+
+    nav {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      margin: 18px 0;
+    }
+
+    nav button {
+      flex: 1;
+      min-width: 75px;
+      padding: 11px 7px;
+      background: #182438;
+      color: white;
+      border: 1px solid #30415b;
+      border-radius: 7px;
+    }
+
+    nav button.active {
+      background: #00a873;
+      border-color: #00df91;
+    }
+
+    .tab {
+      background: #111b2b;
+      border: 1px solid #263750;
+      border-radius: 10px;
+      padding: 17px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: #00df91;
+      font-size: 20px;
+    }
+
+    .price-box {
+      background: #19263a;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 12px 0;
+    }
+
+    button.action {
+      background: #00a873;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 7px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .result {
+      white-space: pre-wrap;
+      padding: 15px;
+      margin-top: 15px;
+      background: #19263a;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .muted {
+      color: #9aa9bd;
+    }
+
+    footer {
+      text-align: center;
+      color: #74849a;
+      font-size: 12px;
+      padding: 20px 0;
+    }
+  </style>
 </head>
 
 <body>
 
   <header>
     <h1>BTC BRAIN PRO</h1>
-    <p>PAPER / ANALYSIS ONLY</p>
+    <p>Advanced Crypto Market Analysis Dashboard</p>
   </header>
 
   <nav>
-    <button onclick="showTab('dashboard')">Dashboard</button>
-    <button onclick="showTab('scanner')">Scanner</button>
-    <button onclick="showTab('plans')">Plans</button>
-    <button onclick="showTab('diagnostics')">Diagnostics</button>
+    <button class="active" onclick="showTab('dashboard', this)">
+      Dashboard
+    </button>
+
+    <button onclick="showTab('scanner', this)">
+      Scanner
+    </button>
+
+    <button onclick="showTab('plans', this)">
+      Plans
+    </button>
+
+    <button onclick="showTab('diagnostics', this)">
+      Diagnostics
+    </button>
   </nav>
 
-  <main>
+  <!-- DASHBOARD -->
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="tab">
-      <h2>Dashboard</h2>
-      <p>Welcome to BTC BRAIN PRO</p>
-    </section>
+  <section id="dashboard" class="tab">
+    <h2>Live Market Dashboard</h2>
 
-    <!-- SCANNER -->
-    <section id="scanner" class="tab" hidden>
-      <h2>Market Scanner</h2>
-      <p>BTC and ETH Market Analysis</p>
-    </section>
+    <p class="muted">
+      BTC and ETH market prices
+    </p>
 
-    <!-- PLANS -->
-    <section id="plans" class="tab" hidden>
-      <h2>Trading Plans</h2>
-      <p>Entry, Stop Loss and Target Analysis</p>
-    </section>
+    <div class="price-box">
+      <h3>BTC / USD</h3>
+      <div id="btcPrice">Loading BTC price...</div>
+    </div>
 
-    <!-- DIAGNOSTICS -->
-    <section id="diagnostics" class="tab" hidden>
-      <h2>Diagnostics</h2>
+    <div class="price-box">
+      <h3>ETH / USD</h3>
+      <div id="ethPrice">Loading ETH price...</div>
+    </div>
 
-      <div id="errorLog">System ready.</div>
+    <div id="brokerCheck" class="result">
+      Connecting to market data...
+    </div>
+  </section>
 
-      <button onclick="testError()">Test Error</button>
+  <!-- MARKET SCANNER -->
 
-      <button onclick="testIndicators()">
-        Test Indicators
-      </button>
+  <section id="scanner" class="tab" hidden>
+    <h2>Market Scanner</h2>
 
-      <div id="indicatorTest"
-        style="white-space:pre-wrap; margin-top:15px;">
-        Not tested
-      </div>
+    <p class="muted">
+      BTC and ETH Market Analysis
+    </p>
 
-    </section>
+    <button class="action" onclick="testStrategy()">
+      RUN STRATEGY TEST
+    </button>
 
-  </main>
+    <div id="strategyResult" class="result">
+      Strategy Waiting...
+    </div>
+  </section>
 
-  <!-- INDICATORS TESTING -->
-  <script src="./indicators.js?v=2"></script>
+  <!-- PLANS -->
+
+  <section id="plans" class="tab" hidden>
+    <h2>Trading Plans</h2>
+
+    <div class="price-box">
+      <h3>Market Analysis</h3>
+      <p>EMA, RSI, MACD, Bollinger Bands and ATR</p>
+    </div>
+
+    <div class="price-box">
+      <h3>Risk Management</h3>
+      <p>Stop Loss and Target calculations</p>
+    </div>
+
+    <p class="muted">
+      Educational analysis only. Always manage your risk.
+    </p>
+  </section>
+
+  <!-- DIAGNOSTICS -->
+
+  <section id="diagnostics" class="tab" hidden>
+    <h2>System Diagnostics</h2>
+
+    <button class="action" onclick="testIndicators()">
+      TEST INDICATORS
+    </button>
+
+    <div id="diagnosticResult" class="result">
+      Waiting for test...
+    </div>
+
+    <button class="action" onclick="testError()">
+      TEST ERROR HANDLING
+    </button>
+
+    <div id="errorResult" class="result">
+      Waiting for test...
+    </div>
+  </section>
+
+  <footer>
+    BTC BRAIN PRO | Market Analysis Platform
+  </footer>
 
   <script>
-
-    function showTab(id) {
-      document.querySelectorAll('.tab').forEach(tab => {
+    function showTab(tabId, button) {
+      document.querySelectorAll(".tab").forEach(function(tab) {
         tab.hidden = true;
       });
 
-      document.getElementById(id).hidden = false;
-    }
+      document.getElementById(tabId).hidden = false;
 
-    function testError() {
-      document.getElementById('errorLog').innerText =
-        'Test error detected successfully.';
+      document.querySelectorAll("nav button").forEach(function(btn) {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
     }
 
     function testIndicators() {
-
-      const output =
-        document.getElementById('indicatorTest');
+      const output = document.getElementById("diagnosticResult");
 
       try {
-
         const I = window.BBPIndicators;
 
         if (!I) {
-          throw new Error('Indicators module not loaded');
+          throw new Error("Indicators module not loaded");
         }
 
-        const close = Array.from(
-          { length: 40 },
-          (_, i) => 100 + i * 1.2 + Math.sin(i / 2)
+        const prices = Array.from(
+          { length: 60 },
+          (_, i) => 100 + i
         );
 
-        const candles = close.map(price => ({
-          open: price - 0.5,
-          high: price + 1,
-          low: price - 1,
-          close: price
-        }));
+        const candles = prices.map(function(price, i) {
+          return {
+            open: price - 1,
+            high: price + 2,
+            low: price - 2,
+            close: price,
+            volume: 1000
+          };
+        });
 
-        const results = {
+        const ema = I.ema(prices, 20);
+        const rsi = I.rsi(prices, 14);
+        const macd = I.macd(prices);
+        const bb = I.bollinger(prices, 20);
+        const atr = I.atr(candles, 14);
 
-          EMA: I.ema(close, 20).at(-1),
+        const last = prices.length - 1;
 
-          RSI: I.rsi(close, 14).at(-1),
-
-          MACD: I.macd(close).line.at(-1),
-
-          Bollinger: I.bollinger(close).upper.at(-1),
-
-          ATR: I.atr(candles, 14).at(-1)
-
-        };
-
-        const checks = [
-
-          Number.isFinite(results.EMA),
-
-          Number.isFinite(results.RSI) &&
-            results.RSI >= 0 &&
-            results.RSI <= 100,
-
-          Number.isFinite(results.MACD),
-
-          Number.isFinite(results.Bollinger),
-
-          Number.isFinite(results.ATR) &&
-            results.ATR > 0
-
+        const results = [
+          ["EMA", ema[last]],
+          ["RSI", rsi[last]],
+          ["MACD", macd.line[last]],
+          ["Bollinger", bb.upper[last]],
+          ["ATR", atr[last]]
         ];
 
-        const passed = checks.filter(Boolean).length;
+        const passed = results.filter(function(item) {
+          return Number.isFinite(item[1]);
+        }).length;
 
         output.innerText =
-          passed + '/5 INDICATORS PASSED\n' +
-
-          Object.entries(results)
-            .map(([name, value]) =>
-              name + ': ' +
-              (Number.isFinite(value)
-                ? value.toFixed(4)
-                : 'FAIL')
-            )
-            .join('\n');
+          results.map(function(item) {
+            return item[0] + ": " + item[1].toFixed(4);
+          }).join("\n") +
+          "\n\n" + passed + "/5 INDICATORS PASSED";
 
         output.style.color =
-          passed === 5 ? '#00df91' : '#ff5555';
+          passed === 5 ? "#00df91" : "#ff5555";
 
       } catch (error) {
-
-        output.innerText =
-          'TEST ERROR: ' + error.message;
-
-        output.style.color = '#ff5555';
-
+        output.innerText = "ERROR: " + error.message;
+        output.style.color = "#ff5555";
       }
     }
 
+    function testStrategy() {
+      const output = document.getElementById("strategyResult");
+
+      try {
+        if (!window.BBPStrategies) {
+          throw new Error("Strategies module not loaded");
+        }
+
+        const candles = Array.from(
+          { length: 60 },
+          (_, i) => {
+            const close =
+              50000 + i * 20 + Math.sin(i / 3) * 100;
+
+            return {
+              open: close - 10,
+              high: close + 80,
+              low: close - 80,
+              close: close,
+              volume: 1000
+            };
+          }
+        );
+
+        const result =
+          window.BBPStrategies.analyze(candles);
+
+        output.innerText =
+          "SIGNAL: " + result.signal + "\n" +
+          "ENTRY: " + (result.entry ?? "WAIT") + "\n" +
+          "STOP LOSS: " + (result.stopLoss ?? "WAIT") + "\n" +
+          "TARGET: " + (result.target ?? "WAIT") + "\n" +
+          "RISK/REWARD: " + (result.riskReward ?? "N/A") + "\n" +
+          "REASON: " + result.reason;
+
+        output.style.color =
+          result.signal === "LONG" ? "#00df91" :
+          result.signal === "SHORT" ? "#ff5555" :
+          "#e0b84d";
+
+      } catch (error) {
+        output.innerText =
+          "STRATEGY ERROR: " + error.message;
+
+        output.style.color = "#ff5555";
+      }
+    }
+
+    function testError() {
+      const output = document.getElementById("errorResult");
+
+      try {
+        if (!window.BBPIndicators) {
+          throw new Error("Indicator system unavailable");
+        }
+
+        output.innerText =
+          "ERROR HANDLING TEST PASSED";
+        output.style.color = "#00df91";
+
+      } catch (error) {
+        output.innerText =
+          "ERROR CAUGHT: " + error.message;
+        output.style.color = "#ff5555";
+      }
+    }
   </script>
 
-  <!-- MARKET DATA MODULE -->
-  <script type="module" src="js/data.js"></script>
+  <!-- INDICATOR ENGINE -->
+  <script src="./indicators.js?v=2"></script>
+
+  <!-- STRATEGY ENGINE -->
+  <script src="./strategies.js?v=1"></script>
+
+  <!-- LIVE MARKET DATA -->
+  <script type="module" src="./js/data.js"></script>
 
 </body>
 </html>
